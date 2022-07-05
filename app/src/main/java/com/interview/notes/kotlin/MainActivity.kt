@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.interview.notes.R
 
-/**
+/**goo
  * Main {@link android.app.Activity} which displays a list of existing Notes.
  */
 class MainActivity : AppCompatActivity() {

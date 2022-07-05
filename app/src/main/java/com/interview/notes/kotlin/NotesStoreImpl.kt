@@ -7,6 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.Exception
 
+sealed <out T: Any> class Result {
+    class Success<T>(val date: T): Result<T>()
+    class Error(val msg: String): Result<Nothing>()
+}
+
 class NotesStoreImpl(applicationContext: Context) : NotesStore {
 
     private val NOTES_KEY = "notes_key"
@@ -20,6 +25,7 @@ class NotesStoreImpl(applicationContext: Context) : NotesStore {
         val type = object : TypeToken<MutableList<Note>>() {}.type
         return gson.fromJson(notesJson, type)
     }
+
 
     override suspend fun saveNote(note: Note): Flow<List<Note>> = flow {
         val notes = getNotes()
