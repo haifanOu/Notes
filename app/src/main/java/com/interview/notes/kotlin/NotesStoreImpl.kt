@@ -7,10 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.Exception
 
-sealed <out T: Any> class Result {
-    class Success<T>(val date: T): Result<T>()
-    class Error(val msg: String): Result<Nothing>()
-}
 
 class NotesStoreImpl(applicationContext: Context) : NotesStore {
 
@@ -26,8 +22,7 @@ class NotesStoreImpl(applicationContext: Context) : NotesStore {
         return gson.fromJson(notesJson, type)
     }
 
-
-    override suspend fun saveNote(note: Note): Flow<List<Note>> = flow {
+    override suspend fun saveNote(note: Note): Flow<Result<List<Note>>> = flow {
         val notes = getNotes()
         notes.add(note)
 
@@ -35,14 +30,20 @@ class NotesStoreImpl(applicationContext: Context) : NotesStore {
             // adding the note into local storage
             val jsonNotes = gson.toJson(notes)
             editor.putString(NOTES_KEY, jsonNotes)
-            editor.apply()
-            emit(notes)
+            if (editor.commit()) {
+                emit(Result.Success(notes))
+            }
         } catch (e: Exception) {
             notes.remove(note)
-            emit(notes)
+            emit(Result.Error("error adding note"))
         }
         // make an network request
         // if the network succeeds, expose the same data in local cache
         // if the network request fails, we can remove the added note and expose the old list
     }
+}
+
+sealed class Result<out T: Any> {
+    data class Success<T: Any>(val date: T): Result<T>()
+    data class Error(val msg: String): Result<Nothing>()
 }

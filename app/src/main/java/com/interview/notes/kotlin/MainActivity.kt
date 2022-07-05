@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     // implement onActivityResult to directly obtain the added note instead of making another request
     override fun onResume() {
         super.onResume()
-    //    fetchNote()
+        fetchNote()
     }
 
 

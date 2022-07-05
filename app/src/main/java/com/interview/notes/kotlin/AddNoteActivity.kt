@@ -9,7 +9,9 @@ import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.interview.notes.R
+import kotlinx.coroutines.InternalCoroutinesApi
 
 /**
  * {@link android.app.Activity} to create a new Note.
@@ -57,7 +59,16 @@ class AddNoteActivity : AppCompatActivity() {
             }
 //            notesStore?.saveNote(Note(title, content))
             viewModel.saveNote(Note(title, content))
-            finish()
+
+            // move to below
+         //   finish()
         })
+        lifecycleScope.launchWhenStarted {
+            viewModel.viewEffect.collect { it ->
+                if (it is MainViewModel.ViewEffect.AddNoteSuccess) {
+                    finish()
+                }
+            }
+        }
     }
 }

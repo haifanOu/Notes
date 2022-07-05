@@ -16,6 +16,6 @@ interface NotesStore {
     /**
      * Save a new note in persistent storage.
      */
-    suspend fun saveNote(note: Note): Flow<List<Note>>
+    suspend fun saveNote(note: Note): Flow<Result<List<Note>>>
 
 }
