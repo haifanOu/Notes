@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.interview.notes.R
 
 /**
@@ -24,6 +25,7 @@ class AddNoteActivity : AppCompatActivity() {
 
     // return an activity result including the added note
     private var notesStore: NotesStore? = null
+    private lateinit var viewModel: MainViewModel
 
     // use viewbinder
     private lateinit var titleEdit: EditText
@@ -32,6 +34,7 @@ class AddNoteActivity : AppCompatActivity() {
 
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory((application as MainApplication).getNotesStore()!!)).get(MainViewModel::class.java)
 
         notesStore = (application as MainApplication).getNotesStore()
 
@@ -52,7 +55,8 @@ class AddNoteActivity : AppCompatActivity() {
                 Toast.makeText(this@AddNoteActivity, "Please enter content", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             }
-            notesStore?.saveNote(Note(title, content))
+//            notesStore?.saveNote(Note(title, content))
+            viewModel.saveNote(Note(title, content))
             finish()
         })
     }

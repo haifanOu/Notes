@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.interview.notes.R
@@ -23,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     *************************************************************************************************************************
     */
 
+    private lateinit var viewModel: MainViewModel
+
     private var notesStore: NotesStore? = null
 
     private lateinit var notesList: RecyclerView
@@ -30,9 +33,15 @@ class MainActivity : AppCompatActivity() {
 
     private val notesAdapter: NotesAdapter = NotesAdapter()
 
+    private fun fetchNote() {
+        viewModel.fetchNotes()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this, MainViewModel.MainViewModelFactory((application as MainApplication).getNotesStore()!!)).get(MainViewModel::class.java)
         setContentView(R.layout.activity_main)
+        fetchNote()
 
         notesStore = (application as MainApplication).getNotesStore()
 
@@ -41,20 +50,22 @@ class MainActivity : AppCompatActivity() {
         notesList.layoutManager = LinearLayoutManager(this)
         notesList.adapter = notesAdapter
         // this part can be extracted to an repository, expose the data to a viewmodel and have fragment/activity observe the viewmodel
-        notesStore?.let { notesAdapter.setNotes(it.getNotes()) }
+//        notesStore?.let { notesAdapter.setNotes(it.getNotes()) }
 
         addNoteButton.setOnClickListener {
             val addNoteActivityIntent = Intent(this, AddNoteActivity::class.java)
             startActivity(addNoteActivityIntent)
+        }
+
+        viewModel.notes.observe(this) {
+            notesAdapter.setNotes(it)
         }
     }
 
     // implement onActivityResult to directly obtain the added note instead of making another request
     override fun onResume() {
         super.onResume()
-        // Refresh notes in the RecyclerView
-        notesStore?.let { notesAdapter.setNotes(it.getNotes()) }
-
+        fetchNote()
     }
 
 
