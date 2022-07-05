@@ -15,17 +15,16 @@ class MainViewModel(
 
     sealed class ViewEffect {
         object AddNoteSuccess: ViewEffect()
+        object AddNoteFailure: ViewEffect()
     }
 
     private val _viewEffect: Channel<ViewEffect> = Channel()
     val viewEffect: Flow<ViewEffect> = _viewEffect.receiveAsFlow()
 
-
     class MainViewModelFactory(val notesStore: NotesStore): ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return MainViewModel(notesStore) as T
         }
-
     }
 
     private val _notes: MutableLiveData<List<Note>> = MutableLiveData(listOf())
@@ -47,7 +46,7 @@ class MainViewModel(
                    if (it is Result.Success<List<Note>>) {
                        _viewEffect.send(ViewEffect.AddNoteSuccess)
                    } else if (it is Result.Error) {
-                       // do somthing
+                       _viewEffect.send(ViewEffect.AddNoteFailure)
                    }
                }
             }

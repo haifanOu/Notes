@@ -64,9 +64,10 @@ class AddNoteActivity : AppCompatActivity() {
          //   finish()
         })
         lifecycleScope.launchWhenStarted {
-            viewModel.viewEffect.collect { it ->
-                if (it is MainViewModel.ViewEffect.AddNoteSuccess) {
-                    finish()
+            viewModel.viewEffect.collect {
+                when(it) {
+                    is MainViewModel.ViewEffect.AddNoteSuccess -> finish()
+                    is MainViewModel.ViewEffect.AddNoteFailure -> Toast.makeText(this@AddNoteActivity, "Something goes wrong", Toast.LENGTH_LONG).show()
                 }
             }
         }

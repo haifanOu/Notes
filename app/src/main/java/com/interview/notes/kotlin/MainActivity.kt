@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
         fetchNote()
     }
 
-
     // should be in another file for modularity
     private class NotesAdapter : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
@@ -98,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textView = itemView.findViewById<TextView>(R.id.note_title)
+            val textView: TextView = itemView.findViewById(R.id.note_title)
         }
 
     }
