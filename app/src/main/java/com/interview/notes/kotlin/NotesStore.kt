@@ -1,5 +1,7 @@
 package com.interview.notes.kotlin
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * Persistent storage for notes.
  * It allows Save and Retrieval of notes.
@@ -14,6 +16,6 @@ interface NotesStore {
     /**
      * Save a new note in persistent storage.
      */
-    fun saveNote(note: Note)
+    suspend fun saveNote(note: Note): Flow<List<Note>>
 
 }

@@ -2,6 +2,7 @@ package com.interview.notes.kotlin
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -31,7 +32,9 @@ class MainViewModel(
     fun saveNote(note: Note) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-               notesStore.saveNote(note)
+               notesStore.saveNote(note).collect {
+                   _notes.postValue(it)
+               }
             }
         }
     }
